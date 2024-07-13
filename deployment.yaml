@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodetest-deployment
+  labels:
+    app: nodetest
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodetest
+  template:
+    metadata:
+      labels:
+        app: nodetest
+    spec:
+      containers:
+      - name: nodetest
+        image: harbinman/nodetest:latest
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodetest-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: nodetest
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 30000  # 你可以指定一个端口，范围是 30000-32767。如果不指定，Kubernetes 会自动分配一个端口。
